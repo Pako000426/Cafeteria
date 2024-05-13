@@ -91,4 +91,4 @@ const sucursal1 = new Sucursal('Sucursal Iztacalco', 20213, 0, 'CDMX', 'Coruña'
 BlackMoon.sucursales.push(sucursal1);
 
 //console.log(sucursal1.aperturaOCierreAutomatico());
-console.log(sucursal1.mostrarSucursal());
+console.log(sucursal1.mostrarInfoSucursal());
