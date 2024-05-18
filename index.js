@@ -2,7 +2,7 @@
 const horaActual = new Date().getHours();
 const minutosActuales = new Date().getMinutes();
 
-const BlackMoon = {
+export const BlackMoon = {
   saldoTotal: 100,
   // Arreglo para las sucursales
   sucursales: [],
@@ -14,17 +14,17 @@ const BlackMoon = {
     return `El saldo total es de: ${this.saldoTotal}`;
   },
   abonarSaldoSucursal(sucursalID, cantidad){
-    const sucursal = this.sucursales.find(sucursal => sucursal.idSucursal === sucursalID)
+    const sucursal = this.sucursales.find(sucursal => sucursal.idSucursal === sucursalID);
     if(sucursal){
-      if(this.saldoTotal > 0){
-        sucursal.saldoSucursal += cantidad
-        this.saldoTotal -= cantidad
-        return `Se han abonado ${cantidad} a la sucursal ${sucursal.nombreSucursal} con exito`
+      if(this.saldoTotal > 0 && cantidad <= this.saldoTotal){
+        sucursal.saldoSucursal += cantidad;
+        this.saldoTotal -= cantidad;
+        return `Se han abonado ${cantidad} a la sucursal ${sucursal.nombreSucursal} con exito`;
       } else {
-        return `No se puede abonar saldo a la sucursal ${sucursal.nombreSucursal} porque el saldo total es 0`
+        return `No se puede abonar saldo a la sucursal ${sucursal.nombreSucursal} ${this.saldoTotal > 0 ? 'porque no cuentas con saldo suficiente' : 'porque el saldo de la total es de 0'}`;
       }
     } else {
-      return `No se encontro la sucursal ${sucursalID}`
+      return `No se encontro la sucursal ${sucursalID}`;
     }
   }
   
@@ -84,7 +84,6 @@ class Sucursal {
     su hora de cierre es: ${this.horaCierre}
     su minuto de cierre es: ${this.minutoCierre}`;
   }
-
   /*
   Modifica el estado de apertura de la sucursal manualmente,
   si la sucursal está abierta, se cierra, y viceversa.
@@ -123,25 +122,98 @@ class Sucursal {
   }
 }
 
-const sucursal1 = new Sucursal('Sucursal Iztacalco', 20213, 0, 'CDMX', 'Coruña', 209, 
-                               9004, 'Iztacalco', 7, 0, 19, 30);
-
-
-BlackMoon.sucursales.push(sucursal1);
-
-/*console.log(BlackMoon.abonarSaldoSucursal(20213, 50));
-console.log(BlackMoon.abonarSaldoSucursal(20213, 50));*/
-
-class empleados {
-  constructor(nombre, apellido) {
+class Persona {
+  constructor(nombre, correo, contrasenia) {
     this.nombre = nombre
-    this.apellido = apellido
+    this.correo = correo
+    this.contrasenia = contrasenia
+  }
+
+  iniciarSesion(correo, contrasenia){
+    if(this.correo === correo && this.contrasenia === contrasenia){
+      console.log(`Bienvenido ${this.nombre}`);
+    } else {
+      console.log('Credenciales incorrectas');
+    }
+  }
+
+  verPerfil(){
+    return `Nombre: ${this.nombre}
+    Correo: ${this.correo}
+    Contraseña: ${this.contrasenia}`;
   }
   
 }
 
-const empleado1 = new empleados('Juan', 'Perez');
-sucursal1.empleados.push(empleado1);
-console.log(sucursal1.abonarASaldoTotal(150));
-console.log(BlackMoon.mostrarSucursales());
-console.log(BlackMoon.mostrarSaldo())
+class Cliente extends Persona {
+  constructor(nombre, correo, contrasenia, diaDeNacimiento, mesDeNacimiento) {
+    super(nombre, correo, contrasenia);
+    this.diaDeNacimiento = diaDeNacimiento;
+    this.mesDeNacimiento = mesDeNacimiento;
+    this.tarjeta = new Tarjeta(false, 0, 0);
+  }
+  ordenarAlimentos(){
+    //ToDo: Hasta que este creado Orden
+  }
+}
+
+class Tarjeta {
+  constructor(activado, token, saldo) {
+    this.activado = activado;
+    this.token =  token;
+    this.saldo = saldo;
+    this.informacionTarjeta = new InformacionTarjetaCliente();
+  }
+  mostrarTarjeta(){
+    return `Activado: ${this.activado}
+            Token: ${this.token}
+            Saldo: ${this.saldo}`;
+  }
+}
+
+class InformacionTarjetaCliente {
+  constructor (empleadoDNIQueActivo, añoDeActivacion, mesDeActivacion, diaDeActivacion, horaDeActivacion,
+              minutoDeActivacion, empleadoDNIQueAbono, añoAbonoTarjetaCte, mesAbonoTarjetaCte, diaAbonoTarjetaCte,
+              horaAbonoTarjetaCte, minutoAbonoTarjetaCte, cantidadAbonada)
+  {
+    this.empleadoDNIQueActivo = empleadoDNIQueActivo;
+    this.añoDeActivacion = añoDeActivacion;
+    this.mesDeActivacion = mesDeActivacion;
+    this.diaDeActivacion = diaDeActivacion;
+    this.horaDeActivacion = horaDeActivacion;
+    this.minutoDeActivacion = minutoDeActivacion;
+    this.empleadoDNIQueAbono = empleadoDNIQueAbono;
+    this.añoAbonoTarjetaCte = añoAbonoTarjetaCte;
+    this.mesAbonoTarjetaCte = mesAbonoTarjetaCte;
+    this.diaAbonoTarjetaCte = diaAbonoTarjetaCte;
+    this.horaAbonoTarjetaCte = horaAbonoTarjetaCte;
+    this.minutoAbonoTarjetaCte = minutoAbonoTarjetaCte;
+    this.cantidadAbonada = cantidadAbonada;
+  }
+  mostrarActivacionTarjeta(){
+    //ToDo
+  }
+}
+
+class Empleado extends Persona {
+  constructor(nombre, correo, contrasenia, rol, dNI, sucursaID, salario, sueldo, totalCobrado, mesDeCobro, diaDeCobro, horaDeCobro, minutoDeCobro){
+    super(nombre, correo, contrasenia);
+    this.rol = rol;
+    this.dNI = dNI;
+    this.sucursalID = sucursaID;
+    this.salario = salario;
+    this.sueldo = sueldo;
+    this.totalCobrado = totalCobrado;
+    this.mesDeCobro = mesDeCobro;
+    this.diaDeCobro = diaDeCobro;
+    this.horaDeCobro = horaDeCobro;
+    this.minutoDeCobro = minutoDeCobro;
+  }
+  crearTarjetaCte() {
+    
+  }
+  cargarSueldo(){
+    
+  }
+    
+}
